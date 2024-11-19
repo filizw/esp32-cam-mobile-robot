@@ -4,7 +4,7 @@
 
 #define LED_PIN GPIO_NUM_4
 
-void app_main(void)
+extern "C" void app_main(void)
 {
     gpio_set_direction(LED_PIN, GPIO_MODE_OUTPUT);
 
