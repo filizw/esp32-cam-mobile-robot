@@ -4,7 +4,7 @@
 
 HTTPServer::HTTPServer()
 {
-    setPort(80); // Set default port to 80
+
 }
 
 HTTPServer::HTTPServer(const uint16_t &port)
@@ -15,12 +15,21 @@ HTTPServer::HTTPServer(const uint16_t &port)
 void HTTPServer::setPort(const uint16_t &port)
 {
     this->port = port;
-    tag = "HTTPServer (port: " + std::to_string(port) + ")"; // Create tag for log messages
+}
+
+void HTTPServer::setTag(const std::string &tag)
+{
+    this->tag = tag;
 }
 
 const uint16_t &HTTPServer::getPort() const
 {
     return port;
+}
+
+const std::string &HTTPServer::getTag() const
+{
+    return tag;
 }
 
 esp_err_t HTTPServer::start()
@@ -53,7 +62,7 @@ esp_err_t HTTPServer::stop()
     return ESP_OK;
 }
 
-esp_err_t HTTPServer::registerURIHandler(const std::string &uri, httpd_method_t method, esp_err_t (*handler)(httpd_req_t *))
+esp_err_t HTTPServer::registerURIHandler(const std::string &uri, httpd_method_t method, esp_err_t (*handler)(httpd_req_t *), void *ctx)
 {
     ESP_RETURN_ON_FALSE(isRunning, ESP_ERR_INVALID_STATE, tag.c_str(), "server is not running");
 
@@ -61,7 +70,7 @@ esp_err_t HTTPServer::registerURIHandler(const std::string &uri, httpd_method_t 
         .uri = uri.c_str(),
         .method = method,
         .handler = handler,
-        .user_ctx = NULL
+        .user_ctx = ctx
     };
 
     ESP_RETURN_ON_ERROR(httpd_register_uri_handler(handle, &uriHandler), tag.c_str(),
