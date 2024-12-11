@@ -1,6 +1,5 @@
 #include "WiFiStation.h"
 #include "HTTPServer.h"
-#include "driver/gpio.h"
 #include <string>
 #include <functional>
 #include <unordered_map>
@@ -27,20 +26,15 @@ public:
 
     RobotController(const std::string &ssid, const std::string &password);
 
-    void registerKeyEventHandler(const Key &key, const KeyEvent &event, KeyEventHandler handler);
+    static void registerKeyEventHandler(const Key &key, const KeyEvent &event, KeyEventHandler handler);
 private:
     struct KeyEventHandlerContext
     {
         KeyEventHandler handler;
     };
 
-    WiFiStation station;
-    HTTPServer server;
-
+    static WiFiStation station;
+    static HTTPServer server;
     static std::string indexPage;
-    static gpio_num_t ledPin;
-    static bool ledStatus;
     static std::unordered_map<std::string, KeyEventHandlerContext> contexts;
-
-    static void toggleLed();
 };

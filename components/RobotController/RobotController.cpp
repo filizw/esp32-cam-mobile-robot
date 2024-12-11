@@ -2,8 +2,8 @@
 
 #include "nvs_flash.h"
 
-gpio_num_t RobotController::ledPin{GPIO_NUM_4};
-bool RobotController::ledStatus{false};
+WiFiStation RobotController::station("", "");
+HTTPServer RobotController::server;
 std::unordered_map<std::string, RobotController::KeyEventHandlerContext> RobotController::contexts;
 
 std::string RobotController::indexPage =
@@ -115,7 +115,7 @@ std::string RobotController::indexPage =
     "</body>"
     "</html>";
 
-RobotController::RobotController(const std::string &ssid, const std::string &password) : station(WiFiStation(ssid, password))
+RobotController::RobotController(const std::string &ssid, const std::string &password)
 {
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
@@ -126,6 +126,7 @@ RobotController::RobotController(const std::string &ssid, const std::string &pas
     }
 
     // Initialize Wi-Fi
+    station.setCredentials(ssid, password);
     station.setTag("Robot Controller Wi-Fi");
     ESP_ERROR_CHECK(station.init());
 
@@ -142,10 +143,6 @@ RobotController::RobotController(const std::string &ssid, const std::string &pas
 
     // Register HTML index page handler
     ESP_ERROR_CHECK(server.registerURIHandler("/", HTTP_GET, indexPageHandler));
-
-    // Register handler for 'L' key
-    gpio_set_direction(ledPin, GPIO_MODE_OUTPUT);
-    registerKeyEventHandler(Key::L, KeyEvent::DOWN, toggleLed);
 }
 
 void RobotController::registerKeyEventHandler(const Key &key, const KeyEvent &event, KeyEventHandler handler)
@@ -199,10 +196,4 @@ void RobotController::registerKeyEventHandler(const Key &key, const KeyEvent &ev
     };
 
     ESP_ERROR_CHECK(server.registerURIHandler(uri, HTTP_GET, uriHandler, &contexts[uri]));
-}
-
-void RobotController::toggleLed()
-{
-    ledStatus = !ledStatus;
-    gpio_set_level(ledPin, ledStatus);
 }
