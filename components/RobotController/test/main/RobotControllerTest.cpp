@@ -8,7 +8,7 @@ using KeyEvent = RobotController::KeyEvent;
 
 extern "C" void app_main(void)
 {
-    RobotController controller("moto e40 6581", "izwo1234");
+    RobotController controller("ssid", "password");
 
     auto printLog1 = []() -> void {
         ESP_LOGI("Arrow up", "pressed");
