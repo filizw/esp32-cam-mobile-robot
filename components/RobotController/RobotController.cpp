@@ -14,10 +14,23 @@ std::string RobotController::indexPage =
     "<title>Test Page</title>" // Page title
     // style
     "<style>"
+    "body { font-family: Arial, sans-serif; margin: 20px; display: flex; flex-direction: column; align-items: center; }"
+    ".key-container { display: grid; grid-template-areas: \". . . . ArrowUp .\" \"L . . ArrowLeft ArrowDown ArrowRight\"; gap: 20px; margin-top: 20px; }"
+    ".key { width: 50px; height: 50px; border: 2px solid black; display: flex; justify-content: center; align-items: center; font-size: 10px; }"
+    ".pressed { background-color: black; color: white; }"
+    ".released { background-color: white; color: black; }"
     "</style>"
     "</head>"
     // body
     "<body>"
+    "<div class='key-container'>"
+    "<div style='grid-area: L;' id='L' class='key released'>L</div>"
+    "<div style='grid-area: ArrowUp;' id='ArrowUp' class='key released'>Up</div>"
+    "<div style='grid-area: ArrowLeft;' id='ArrowLeft' class='key released'>Left</div>"
+    "<div style='grid-area: ArrowDown;' id='ArrowDown' class='key released'>Down</div>"
+    "<div style='grid-area: ArrowRight;' id='ArrowRight' class='key released'>Right</div>"
+    "</div>"
+    
     // script
     "<script>"
     "let isArrowUpKeyPressed = false;"
@@ -25,6 +38,17 @@ std::string RobotController::indexPage =
     "let isArrowLeftKeyPressed = false;"
     "let isArrowRightKeyPressed = false;"
     "let isLKeyPressed = false;"
+
+    "function updateKeyVisual(key, isPressed) {"
+    "const keyElement = document.getElementById(key);"
+    "if (isPressed) {"
+    "keyElement.classList.add('pressed');"
+    "keyElement.classList.remove('released');"
+    "} else {"
+    "keyElement.classList.add('released');"
+    "keyElement.classList.remove('pressed');"
+    "}"
+    "}"
 
     "function keyEvent(key, event) {"
     "fetch(`/${key}-${event}`).then(response => response.text()).then(data => {"
@@ -39,6 +63,7 @@ std::string RobotController::indexPage =
     "if(!isArrowUpKeyPressed) {"
     "isArrowUpKeyPressed = true;"
     "keyEvent('ArrowUp', 'down');"
+    "updateKeyVisual('ArrowUp', true);"
     "}"
     "break;"
     // ArrowDown
@@ -46,6 +71,7 @@ std::string RobotController::indexPage =
     "if(!isArrowDownKeyPressed) {"
     "isArrowDownKeyPressed = true;"
     "keyEvent('ArrowDown', 'down');"
+    "updateKeyVisual('ArrowDown', true);"
     "}"
     "break;"
     // ArrowLeft
@@ -53,6 +79,7 @@ std::string RobotController::indexPage =
     "if(!isArrowLeftKeyPressed) {"
     "isArrowLeftKeyPressed = true;"
     "keyEvent('ArrowLeft', 'down');"
+    "updateKeyVisual('ArrowLeft', true);"
     "}"
     "break;"
     // ArrowRight
@@ -60,6 +87,7 @@ std::string RobotController::indexPage =
     "if(!isArrowRightKeyPressed) {"
     "isArrowRightKeyPressed = true;"
     "keyEvent('ArrowRight', 'down');"
+    "updateKeyVisual('ArrowRight', true);"
     "}"
     "break;"
     // l
@@ -67,6 +95,7 @@ std::string RobotController::indexPage =
     "if(!isLKeyPressed) {"
     "isLKeyPressed = true;"
     "keyEvent('l', 'down');"
+    "updateKeyVisual('L', true);"
     "}"
     "break;"
     "}"
@@ -79,6 +108,7 @@ std::string RobotController::indexPage =
     "if(isArrowUpKeyPressed) {"
     "isArrowUpKeyPressed = false;"
     "keyEvent('ArrowUp', 'up');"
+    "updateKeyVisual('ArrowUp', false);"
     "}"
     "break;"
     // ArrowDown
@@ -86,6 +116,7 @@ std::string RobotController::indexPage =
     "if(isArrowDownKeyPressed) {"
     "isArrowDownKeyPressed = false;"
     "keyEvent('ArrowDown', 'up');"
+    "updateKeyVisual('ArrowDown', false);"
     "}"
     "break;"
     // ArrowLeft
@@ -93,6 +124,7 @@ std::string RobotController::indexPage =
     "if(isArrowLeftKeyPressed) {"
     "isArrowLeftKeyPressed = false;"
     "keyEvent('ArrowLeft', 'up');"
+    "updateKeyVisual('ArrowLeft', false);"
     "}"
     "break;"
     // ArrowRight
@@ -100,12 +132,15 @@ std::string RobotController::indexPage =
     "if(isArrowRightKeyPressed) {"
     "isArrowRightKeyPressed = false;"
     "keyEvent('ArrowRight', 'up');"
+    "updateKeyVisual('ArrowRight', false);"
     "}"
     "break;"
     // l
     "case 'l':"
     "if(isLKeyPressed) {"
     "isLKeyPressed = false;"
+    "keyEvent('l', 'up');"
+    "updateKeyVisual('L', false);"
     "}"
     "break;"
     "}"
