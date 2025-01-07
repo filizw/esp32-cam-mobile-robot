@@ -38,6 +38,7 @@ esp_err_t HTTPServer::start()
 
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.server_port = port;
+    config.max_uri_handlers = 16;
 
     // Start the web server
     ESP_RETURN_ON_ERROR(httpd_start(&handle, &config), tag.c_str(), "failed to start the server");
