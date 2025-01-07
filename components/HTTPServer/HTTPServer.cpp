@@ -7,12 +7,12 @@ HTTPServer::HTTPServer()
 
 }
 
-HTTPServer::HTTPServer(const uint16_t &port)
+HTTPServer::HTTPServer(uint16_t port)
 {
     setPort(port);
 }
 
-void HTTPServer::setPort(const uint16_t &port)
+void HTTPServer::setPort(uint16_t port)
 {
     this->port = port;
 }
@@ -22,7 +22,7 @@ void HTTPServer::setTag(const std::string &tag)
     this->tag = tag;
 }
 
-const uint16_t &HTTPServer::getPort() const
+uint16_t HTTPServer::getPort() const
 {
     return port;
 }
@@ -38,6 +38,7 @@ esp_err_t HTTPServer::start()
 
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     config.server_port = port;
+    config.ctrl_port = ESP_HTTPD_DEF_CTRL_PORT + port - defaultPort; // Change control port
     config.max_uri_handlers = 16;
 
     // Start the web server
