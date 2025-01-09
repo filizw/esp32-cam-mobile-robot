@@ -8,8 +8,8 @@ using KeyEvent = RobotController::KeyEvent;
 
 extern "C" void app_main(void)
 {
-    RobotController controller("ssid", "password");
-    ab::Vehicle4WD* car1 = new ab::Vehicle4WDSteering(0, 50, 0);
+    RobotController controller("WadowiceNet_1f5d7", "gv9zad7l");
+    ab::Vehicle4WDSteering* car1 = new ab::Vehicle4WDSteering(0, 50, 0);
 
     auto arrowUpPressed = [=]() -> void {
         ESP_LOGI("Arrow up", "pressed");
@@ -26,7 +26,7 @@ extern "C" void app_main(void)
     auto arrowDownPressed = [=]() -> void {
         ESP_LOGI("Arrow down", "pressed");
 
-        car1->driveBackward(0);
+        car1->driveBackwards(0);
     };
 
     auto arrowDownReleased = [=]() -> void {
