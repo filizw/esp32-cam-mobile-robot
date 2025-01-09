@@ -87,7 +87,7 @@ namespace ab {
         /**
          * The same as driveForward(), but backwards
          */
-        void driveBackward(int duration);
+        void driveBackwards(int duration);
 
         /**
          * Stop the vehicle
@@ -107,5 +107,11 @@ namespace ab {
          * The same as turnLeft() but right
          */
         virtual void turnRight(int turn);
+
+        /**
+         * Makes square figure 0 - left, 1 - right
+         * duration means how long the side will be
+         */
+        void makeSquare(int lr, int duration);
     };
 }

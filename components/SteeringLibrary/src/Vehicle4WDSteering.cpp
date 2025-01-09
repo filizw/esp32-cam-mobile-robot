@@ -5,7 +5,13 @@ namespace ab {
         m_turnAngle = 0;
         m_duty = getPwmResolution()*(1.5/20);
     }
-    Vehicle4WDSteering::Vehicle4WDSteering(int direction, int speed, int turn) : Vehicle4WD(direction, direction, speed), m_turnAngle(turn) {}
+    Vehicle4WDSteering::Vehicle4WDSteering(int direction, int speed, int turn) : Vehicle4WD(direction, direction, speed), m_turnAngle(turn) {
+        if (m_turnAngle < 0) {
+            turnLeft(-m_turnAngle);
+        } else {
+            turnRight(m_turnAngle);
+        }
+    }
 
     int Vehicle4WDSteering::getTurnAngle() const {
         return m_turnAngle;
@@ -28,5 +34,14 @@ namespace ab {
             ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, m_duty);
             ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
         }
+    }
+
+    void Vehicle4WDSteering::makeCircle(int lr, int duration) {
+        if (lr) {
+            turnRight(30);
+        } else {
+            turnLeft(30);
+        }
+        driveForward(duration);
     }
 }

@@ -53,8 +53,8 @@ namespace ab {
 
         esp_rom_gpio_connect_out_signal(MOTOR_ENB_PIN, LEDC_LS_SIG_OUT0_IDX, false, false);
 
-        ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, m_pwmResolution*(m_speed/100.0));
-        ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
+        setSpeed(m_speed);
+        
         ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, m_pwmResolution*(1.5/20.0));
         ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
     }
@@ -112,7 +112,7 @@ namespace ab {
     void Vehicle4WD::setSpeed(int speed) {
         if (speed >= 0 && speed <= 100) {
             m_speed = speed;
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, m_pwmResolution*(m_speed/100));
+            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0, m_pwmResolution*(m_speed/100.0));
             ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_0);
         }
     }
@@ -140,7 +140,7 @@ namespace ab {
         }
     }
 
-    void Vehicle4WD::driveBackward(int duration) {
+    void Vehicle4WD::driveBackwards(int duration) {
             leftWheelsDirection(2);
             rightWheelsDirection(2);
 
@@ -172,6 +172,18 @@ namespace ab {
         if (turn > 0) {
             vTaskDelay(turn/portTICK_PERIOD_MS);
             stop();
+        }
+    }
+
+    void Vehicle4WD::makeSquare(int lr, int duration) {
+        driveForward(duration);
+        for (int i=0; i<3; i++) {
+            if (lr) {
+                turnRight(1500);
+            } else {
+                turnLeft(1500);
+            }
+            driveForward(duration);
         }
     }
 }
