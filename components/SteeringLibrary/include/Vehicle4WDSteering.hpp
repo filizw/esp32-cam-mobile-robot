@@ -2,34 +2,39 @@
 
 #include "Vehicle4WD.hpp"
 
-class Vehicle4WDSteering : public Vehicle4WD {
-private:
-    int m_turnAngle;    // -40° - 40°
+namespace ab {
+    /**
+     * This class is derived from Vehicle4WD so the turning mechanism using servos
+     * can be implemented
+     */
+    class Vehicle4WDSteering : public Vehicle4WD {
+    private:
+        int m_turnAngle;    // -40° - 40°
+        int m_duty;
 
-public:
-    Vehicle4WDSteering(int direction, int speed, int turn = 0) : Vehicle4WD(direction, direction, speed), m_turnAngle(turn) {}
+    public:
+        /**
+         * Default contructor
+         */
+        Vehicle4WDSteering();
+        /**
+         * Parameterized constructor that takes direction of driving, speed and turn angle
+         */
+        Vehicle4WDSteering(int direction, int speed, int turn);
+        //~Vehicle4WDSteering() {}
 
-    int getTurnAngle() const {
-        return m_turnAngle;
-    }
+        int getTurnAngle() const;
 
-    void turnLeft(int turn) override {
-        if (turn >= 0 && turn <= 40) {
-            m_turnAngle = -turn;
-
-            int duty = ((1.0+((90.0+m_turnAngle)/180.0))/20.0)*getPwmResolution();
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, duty);
-            ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
-        }
-    }
-
-    void turnRight(int turn) override {
-        if (turn >= 0 && turn <= 40) {
-            m_turnAngle = turn;
-
-            int duty = ((1.0+((90.0+m_turnAngle)/180.0))/20.0)*getPwmResolution();
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, duty);
-            ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
-        }
-    }
-};
+        /**
+         * Overrided function to turn vehicle
+         * it takes angle in degrees, the set range is 0-40 left and right, so overall -40 to 40 degrees
+         * but it can be changed in code for different vehicles
+         * this range works best for our robot
+         */
+        void turnLeft(int turn) override;
+        /**
+         * The same as function turnLeft() but right
+         */
+        void turnRight(int turn) override;
+    };
+}
