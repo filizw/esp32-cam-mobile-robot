@@ -64,7 +64,7 @@ extern "C" void app_main(void)
         ledStatus = !ledStatus;
         gpio_set_level(LED_PIN, ledStatus);
 
-        if (ledStatus == true) {
+        if (ledStatus) {
             car1->setSpeed(100);
         } else {
             car1->setSpeed(50);
