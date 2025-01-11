@@ -1,10 +1,10 @@
 #include "CameraServer.h"
 
-const char *CameraServer::CAMERA_TAG{"Camera"};
+static const char *CAMERA_TAG{"Camera"}; // Camera tag identifier
 
-//#define AI_THINKER
+//#define AI_THINKER // Define if using Ai Thinker board
 #ifdef AI_THINKER
-// AiThinker PIN Map    
+// Ai Thinker PIN Map    
 #define CAM_PIN_PWDN    32
 #define CAM_PIN_RESET   -1
 #define CAM_PIN_XCLK     0
@@ -53,17 +53,17 @@ static const char* _STREAM_PART = "Content-Type: image/jpeg\r\nContent-Length: %
 CameraServer::CameraServer()
 {
     setTag("CameraServer");
-    cameraInit();
 }
 
 CameraServer::CameraServer(uint16_t port) : HTTPServer(port)
 {
     setTag("CameraServer");
-    cameraInit();
 }
 
 esp_err_t CameraServer::start()
 {
+    ESP_RETURN_ON_ERROR(cameraInit(), CAMERA_TAG, "failed to initialize the camera");
+
     esp_err_t err = startServer();
     if(err == ESP_OK)
         err = registerURIHandler("/stream", HTTP_GET, jpgStreamHandler);
@@ -71,7 +71,7 @@ esp_err_t CameraServer::start()
     return err;
 }
 
-void CameraServer::cameraInit()
+esp_err_t CameraServer::cameraInit()
 {
     camera_config_t camera_config = {
         .pin_pwdn  = CAM_PIN_PWDN,
@@ -101,11 +101,12 @@ void CameraServer::cameraInit()
 
         .jpeg_quality = 10,
         .fb_count = 1,
-        .grab_mode = CAMERA_GRAB_WHEN_EMPTY
+        .fb_location{},
+        .grab_mode = CAMERA_GRAB_WHEN_EMPTY,
+        .sccb_i2c_port{},
     };
 
-    if(esp_camera_init(&camera_config) != ESP_OK)
-        ESP_LOGE(CAMERA_TAG, "failed to initialize the camera");
+    return esp_camera_init(&camera_config);
 }
 
 esp_err_t CameraServer::jpgStreamHandler(httpd_req_t *req)
