@@ -1,9 +1,8 @@
 #include "RobotController.h"
 
-#include "nvs_flash.h"
-
 WiFiStation RobotController::station("", "");
 HTTPServer RobotController::server;
+CameraServer RobotController::cameraServer;
 std::unordered_map<std::string, RobotController::KeyEventHandlerContext> RobotController::contexts;
 
 std::string RobotController::indexPage =
@@ -11,7 +10,7 @@ std::string RobotController::indexPage =
     "<html>"
     // head
     "<head>"
-    "<title>Test Page</title>" // Page title
+    "<title>Test</title>" // Page title
     // style
     "<style>"
     "body { font-family: Arial, sans-serif; margin: 20px; display: flex; flex-direction: column; align-items: center; }"
@@ -19,10 +18,12 @@ std::string RobotController::indexPage =
     ".key { width: 50px; height: 50px; border: 2px solid black; display: flex; justify-content: center; align-items: center; font-size: 10px; }"
     ".pressed { background-color: black; color: white; }"
     ".released { background-color: white; color: black; }"
+    "img { display: block; margin: 0 auto; max-width: 100%; height: auto; }"
     "</style>"
     "</head>"
     // body
     "<body>"
+    "<img src='http://192.168.0.100:81/stream'>" // Static IP address, must be used to obtain JPEG stream
     "<div class='key-container'>"
     "<div style='grid-area: L;' id='L' class='key released'>L</div>"
     "<div style='grid-area: ArrowUp;' id='ArrowUp' class='key released'>Up</div>"
@@ -162,6 +163,7 @@ RobotController::RobotController(const std::string &ssid, const std::string &pas
 
     // Initialize Wi-Fi
     station.setCredentials(ssid, password);
+    station.setAddress("192.168.0.100", "192.168.0.1", "255.255.255.0"); // Set static IP address
     station.setTag("Robot Controller Wi-Fi");
     ESP_ERROR_CHECK(station.init());
 
@@ -178,6 +180,10 @@ RobotController::RobotController(const std::string &ssid, const std::string &pas
 
     // Register HTML index page handler
     ESP_ERROR_CHECK(server.registerURIHandler("/", HTTP_GET, indexPageHandler));
+
+    // Start HTTP camera server
+    cameraServer.setPort(81);
+    ESP_ERROR_CHECK(cameraServer.start());
 }
 
 void RobotController::registerKeyEventHandler(const Key &key, const KeyEvent &event, KeyEventHandler handler)
@@ -206,22 +212,24 @@ void RobotController::registerKeyEventHandler(const Key &key, const KeyEvent &ev
     switch (event)
     {
     case KeyEvent::DOWN:
-        uri += "down";
+        uri += "down"; // Key pressed
         break;
     case KeyEvent::UP:
         if(key != Key::L)
-            uri += "up";
+            uri += "up"; // Key released
         break;
     }
 
-    contexts[uri] = {handler};
+    contexts[uri] = {handler}; // Save handler
 
+    // Create URI handler
     auto uriHandler = [](httpd_req_t *req) -> esp_err_t {
-        KeyEventHandlerContext *context = (KeyEventHandlerContext *)req->user_ctx;
+        KeyEventHandlerContext *context = (KeyEventHandlerContext *)req->user_ctx; // Cast void pointer to context pointer
 
+        // Check if context is valid
         if(context && context->handler)
         {
-            context->handler();
+            context->handler(); // Derive handler from context
 
             httpd_resp_send(req, "OK", HTTPD_RESP_USE_STRLEN);
             return ESP_OK;
