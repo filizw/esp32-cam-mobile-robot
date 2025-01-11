@@ -1,13 +1,14 @@
 #include "HTTPServer.h"
 
-const std::string HTTPServer::DEFAULT_TAG{"HTTPServer"};
+static constexpr uint16_t DEFAULT_PORT{80};
+static const std::string DEFAULT_TAG{"HTTPServer"};
 
-HTTPServer::HTTPServer()
+HTTPServer::HTTPServer() : port(DEFAULT_PORT), tag(DEFAULT_TAG)
 {
 
 }
 
-HTTPServer::HTTPServer(uint16_t port) : port(port)
+HTTPServer::HTTPServer(uint16_t port) : port(port), tag(DEFAULT_TAG)
 {
 
 }
@@ -73,7 +74,7 @@ esp_err_t HTTPServer::startServer()
     config.ctrl_port = ESP_HTTPD_DEF_CTRL_PORT + port - DEFAULT_PORT; // Change control port
     config.max_uri_handlers = 16;
 
-    // Start the web server
+    // Start web server
     ESP_RETURN_ON_ERROR(httpd_start(&handle, &config), tag.c_str(), "failed to start the server");
 
     isServerRunning = true;
@@ -86,7 +87,7 @@ esp_err_t HTTPServer::stopServer()
 {
     ESP_RETURN_ON_FALSE(isServerRunning, ESP_ERR_INVALID_STATE, tag.c_str(), "server is not running");
 
-    // Stop the web server
+    // Stop web server
     ESP_RETURN_ON_ERROR(httpd_stop(handle), tag.c_str(), "failed to stop the server");
 
     handle = nullptr;
