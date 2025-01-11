@@ -183,6 +183,7 @@ RobotController::RobotController(const std::string &ssid, const std::string &pas
 
     // Start HTTP camera server
     cameraServer.setPort(81);
+    cameraServer.setTag("Robot Controller HTTP camera server");
     ESP_ERROR_CHECK(cameraServer.start());
 }
 
