@@ -80,9 +80,9 @@ esp_err_t WiFiStation::init()
     ESP_RETURN_ON_ERROR(esp_event_loop_create_default(), tag.c_str(), "failed to create an event loop");
     auto netif = esp_netif_create_default_wifi_sta();
 
-    ESP_RETURN_ON_ERROR(esp_wifi_init(&initConfig), tag.c_str(), "failed to initialize the WiFi");
+    ESP_RETURN_ON_ERROR(esp_wifi_init(&initConfig), tag.c_str(), "failed to initialize the Wi-Fi");
 
-    // Check if address, gateway and subnet mask are set, if not then use DHCP
+    // Check if IP address, gateway and subnet mask are set, if not then use DHCP
     if(address.size() > 0 && gateway.size() > 0 && subnetMask.size() > 0)
     {
         // Static IP address configuration
@@ -91,8 +91,11 @@ esp_err_t WiFiStation::init()
         ip_info.gw.addr = esp_ip4addr_aton(gateway.c_str());            // Gateway
         ip_info.netmask.addr = esp_ip4addr_aton(subnetMask.c_str());    // Subnet mask
 
-        ESP_ERROR_CHECK(esp_netif_dhcpc_stop(netif));                   // Turn off DHCP
-        ESP_ERROR_CHECK(esp_netif_set_ip_info(netif, &ip_info));        // Set static IP address
+        // Turn off DHCP
+        ESP_RETURN_ON_ERROR(esp_netif_dhcpc_stop(netif), tag.c_str(), "failed to stop DHCP");
+
+        // Set static IP address
+        ESP_RETURN_ON_ERROR(esp_netif_set_ip_info(netif, &ip_info), tag.c_str(), "failed to set static IP address");
     }
 
     // Register handler for WiFi events
@@ -100,7 +103,7 @@ esp_err_t WiFiStation::init()
                                                             ESP_EVENT_ANY_ID,
                                                             &wifiEventHandler,
                                                             nullptr,
-                                                            nullptr), tag.c_str(), "failed to register the WiFi event handler");
+                                                            nullptr), tag.c_str(), "failed to register the Wi-Fi event handler");
 
     // Register handler for IP events
     ESP_RETURN_ON_ERROR(esp_event_handler_instance_register(IP_EVENT,
@@ -114,7 +117,7 @@ esp_err_t WiFiStation::init()
 
     // Set WiFi configuration
     ESP_RETURN_ON_ERROR(esp_wifi_set_config(WIFI_IF_STA, &config), tag.c_str(), "failed to set the configuration");
-    ESP_RETURN_ON_ERROR(esp_wifi_start(), tag.c_str(), "failed to start the WiFi");
+    ESP_RETURN_ON_ERROR(esp_wifi_start(), tag.c_str(), "failed to start the Wi-Fi");
 
     // Change state to indicate that initialization is complete
     state = State::INITIALIZED;
