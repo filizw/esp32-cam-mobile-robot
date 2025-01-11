@@ -1,5 +1,5 @@
-#include "nvs_flash.h"
 #include "WiFiStation.h"
+#include "nvs_flash.h"
 
 extern "C" void app_main(void)
 {
@@ -11,11 +11,12 @@ extern "C" void app_main(void)
         ret = nvs_flash_init();
     }
 
-    // Input your WiFi SSID and password
+    // Input WiFi SSID and password
     std::string ssid{"ssid"};
     std::string password{"password"};
 
     WiFiStation station(ssid, password);
+    station.setAddress("192.168.0.100", "192.168.0.1", "255.255.255.0");
     station.setTag("Wi-Fi");
     station.init();
 }
