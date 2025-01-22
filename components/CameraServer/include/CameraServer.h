@@ -3,6 +3,7 @@
 #include "HTTPServer.h"
 #include "esp_camera.h"
 #include "esp_log.h"
+#include "sensor.h"
 
 class CameraServer : public HTTPServer
 {

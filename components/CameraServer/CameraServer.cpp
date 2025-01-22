@@ -64,6 +64,12 @@ esp_err_t CameraServer::start()
 {
     ESP_RETURN_ON_ERROR(cameraInit(), CAMERA_TAG, "failed to initialize the camera");
 
+    sensor_t *s = esp_camera_sensor_get();
+    if (s != NULL) {
+        s->set_vflip(s, 1);     // Flip camera view vertically
+        s->set_hmirror(s, 1);   // Flip camera view horizontally
+    }
+
     esp_err_t err = startServer();
     if(err == ESP_OK)
         err = registerURIHandler("/stream", HTTP_GET, jpgStreamHandler);
