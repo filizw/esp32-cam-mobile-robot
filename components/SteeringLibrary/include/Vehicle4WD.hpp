@@ -18,12 +18,12 @@
  */
 constexpr gpio_num_t LED_PIN = GPIO_NUM_2;
 
-constexpr gpio_num_t MOTOR_IN1_PIN = GPIO_NUM_26;
-constexpr gpio_num_t MOTOR_IN2_PIN = GPIO_NUM_25;
-constexpr gpio_num_t MOTOR_IN3_PIN = GPIO_NUM_33;
-constexpr gpio_num_t MOTOR_IN4_PIN = GPIO_NUM_32;
+constexpr gpio_num_t MOTOR_IN1_PIN = GPIO_NUM_13;
+constexpr gpio_num_t MOTOR_IN2_PIN = GPIO_NUM_33;
+constexpr gpio_num_t MOTOR_IN3_PIN = GPIO_NUM_32;
+constexpr gpio_num_t MOTOR_IN4_PIN = GPIO_NUM_2;
 constexpr gpio_num_t MOTOR_ENA_PIN = GPIO_NUM_14;
-constexpr gpio_num_t MOTOR_ENB_PIN = GPIO_NUM_27;
+constexpr gpio_num_t MOTOR_ENB_PIN = GPIO_NUM_15;
 
 constexpr gpio_num_t SERVO_STEERING_PIN = GPIO_NUM_12;
 

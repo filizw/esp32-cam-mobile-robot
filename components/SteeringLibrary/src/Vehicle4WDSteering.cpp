@@ -22,8 +22,8 @@ namespace ab {
             m_turnAngle = -turn;
 
             m_duty = ((1.0+((90.0+m_turnAngle)/180.0))/20.0)*getPwmResolution();
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, m_duty);
-            ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
+            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3, m_duty);
+            ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3);
         }
     }
     void Vehicle4WDSteering::turnRight(int turn) {
@@ -31,8 +31,8 @@ namespace ab {
             m_turnAngle = turn;
 
             m_duty = ((1.0+((90.0+m_turnAngle)/180.0))/20.0)*getPwmResolution();
-            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1, m_duty);
-            ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_1);
+            ledc_set_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3, m_duty);
+            ledc_update_duty(LEDC_LOW_SPEED_MODE, LEDC_CHANNEL_3);
         }
     }
 
