@@ -1,15 +1,13 @@
 #include "RobotController.h"
 #include "Vehicle4WDSteering.hpp"
 
-#include "esp_log.h"
-
 using Key = RobotController::Key;
 using KeyEvent = RobotController::KeyEvent;
 
 extern "C" void app_main(void)
 {
-    RobotController controller("*****", "*****");
     ab::Vehicle4WDSteering* car1 = new ab::Vehicle4WDSteering(0, 50, 0);
+    RobotController controller("*****", "*****");
 
     auto arrowUpPressed = [=]() -> void {
         ESP_LOGI("Arrow up", "pressed");
@@ -60,14 +58,15 @@ extern "C" void app_main(void)
     };
 
     auto toggleLed = [=]() -> void {
-        static auto ledStatus = 0;
-        ledStatus = !ledStatus;
-        gpio_set_level(LED_PIN, ledStatus);
+        static auto speedStatus = 0;
+        speedStatus = !speedStatus;
 
-        if (ledStatus) {
+        if (speedStatus) {
             car1->setSpeed(100);
+            ESP_LOGI("L", "pressed");
         } else {
             car1->setSpeed(50);
+            ESP_LOGI("L", "pressed");
         }
     };
 
